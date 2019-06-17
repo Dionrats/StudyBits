@@ -8,7 +8,8 @@ addons:
   apt:
     packages:
       - oracle-java8-installer
-# before_install:
+before_install:
+    - cd university-agent
 #   - chmod +x mvnw
 services:
   - 'docker'
