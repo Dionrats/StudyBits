@@ -61,7 +61,7 @@ public class IndyConfiguration {
 
         String name = universityName.replace(" ", "");
         String seed = StringUtils.leftPad(name, 32, '0');
-        String poolName = PoolUtils.createPoolLedgerConfig(null);
+        String poolName = PoolUtils.createPoolLedgerConfig("10.40.121.141");
         IndyPool indyPool = new IndyPool(poolName);
         return IndyWallet.create(indyPool, name, seed);
     }
