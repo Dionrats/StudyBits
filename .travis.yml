@@ -8,8 +8,8 @@ addons:
   apt:
     packages:
       - oracle-java8-installer
-before_install:
-  - chmod +x mvnw
+# before_install:
+#   - chmod +x mvnw
 services:
   - 'docker'
 install:
