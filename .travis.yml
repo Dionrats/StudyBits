@@ -14,9 +14,9 @@ before_install:
 services:
   - 'docker'
 install:
-  - mvn install
+  - mvn install -DskipTests
 script:
-  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -DskipTests
 # after_success:
 #   - if [[ "$TRAVIS_BRANCH" == "master" ]]; then
 #       ./mvnw install dockerfile:build ;
