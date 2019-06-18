@@ -5,9 +5,11 @@ import nl.quintor.studybits.indy.wrapper.*;
 import nl.quintor.studybits.indy.wrapper.message.IndyMessageTypes;
 import nl.quintor.studybits.indy.wrapper.message.MessageEnvelopeCodec;
 import nl.quintor.studybits.indy.wrapper.util.PoolUtils;
+import nl.quintor.studybits.indy.wrapper.util.SeedUtil;
 import nl.quintor.studybits.messages.StudyBitsMessageTypes;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.hyperledger.indy.sdk.did.Did;
 import org.hyperledger.indy.sdk.pool.Pool;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -24,6 +26,8 @@ import java.nio.file.Paths;
 public class IndyConfiguration {
     @Value("${nl.quintor.studybits.university.name}")
     private String universityName;
+
+    private boolean shouldReload = false;
 
 
     @Bean
@@ -61,8 +65,11 @@ public class IndyConfiguration {
 
         String name = universityName.replace(" ", "");
         String seed = StringUtils.leftPad(name, 32, '0');
-        String poolName = PoolUtils.createPoolLedgerConfig("10.40.121.141");
-        IndyPool indyPool = new IndyPool(poolName);
-        return IndyWallet.create(indyPool, name, seed);
+        String poolName = "default_pool";
+        if(shouldReload){
+            poolName = PoolUtils.createPoolLedgerConfig("10.40.121.141");
+            return IndyWallet.create(new IndyPool(poolName), name, seed);
+        }
+        return IndyWallet.open(new IndyPool(poolName), name, seed, "SYqJSzcfsJMhSt7qjcQ8CC");
     }
 }

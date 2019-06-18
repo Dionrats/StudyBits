@@ -4,6 +4,7 @@ alias seeder='java -jar ./target/seeder-1.0-SNAPSHOT-jar-with-dependencies.jar'
 
 GRONINGEN_NAME="RijksuniversiteitGroningen"
 GRONINGEN_SEED="000000RijksuniversiteitGroningen"
+GRONINGEN_DOMAIN="http://10.40.121.141:8080"
 GENT_NAME="UniversiteitGent"
 GENT_SEED="0000000000000000UniversiteitGent"
 # Create steward
@@ -16,11 +17,11 @@ seeder onboard $GENT_SEED $GENT_NAME $GENT_DID
 
 SCHEMA_ID=$(seeder schema)
 
-CRED_DEF_ID=$(seeder cred-def http://localhost:8080 $SCHEMA_ID)
+CRED_DEF_ID=$(seeder cred-def $GRONINGEN_DOMAIN $SCHEMA_ID)
 echo "CRED DEF ID $CRED_DEF_ID"
-seeder student http://localhost:8080 12345678
+seeder student $GRONINGEN_DOMAIN 12345678
 
-seeder exchange-position http://localhost:8081 $CRED_DEF_ID
+seeder exchange-position $GRONINGEN_DOMAIN $CRED_DEF_ID
 
 touch /finished.txt
 
