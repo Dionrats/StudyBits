@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Data
@@ -43,6 +44,9 @@ public class Student {
 
     @Embedded
     private Transcript transcript;
+
+    @OneToMany(mappedBy = "id")
+    private Set<Document> documents;
 
     public boolean hasDid() {
         if(this.getStudentDid() != null){

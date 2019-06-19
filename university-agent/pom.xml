@@ -34,6 +34,10 @@
                 https://dl.bintray.com/quintor/quintor
             </url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <dependencyManagement>
@@ -133,16 +137,24 @@
             <artifactId>jaxb-api</artifactId>
             <version>2.2.11</version>
         </dependency>
-
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.ipfs</groupId>
+            <artifactId>java-ipfs-api</artifactId>
+            <version>v1.2.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.modelmapper</groupId>
+            <artifactId>modelmapper</artifactId>
+            <version>2.3.2</version>
         </dependency>
     </dependencies>
 
