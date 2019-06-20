@@ -10,7 +10,6 @@ import nl.quintor.studybits.indy.wrapper.message.IndyMessageTypes;
 import nl.quintor.studybits.indy.wrapper.message.MessageEnvelope;
 import nl.quintor.studybits.indy.wrapper.message.MessageEnvelopeCodec;
 import nl.quintor.studybits.indy.wrapper.util.PoolUtils;
-import nl.quintor.studybits.utils.CredentialDefinitionType;
 import org.hyperledger.indy.sdk.IndyException;
 import org.hyperledger.indy.sdk.pool.Pool;
 import org.springframework.http.ResponseEntity;
@@ -142,7 +141,7 @@ public class Seeder {
         public void run() {
             try {
                 RestTemplate restTemplate = new RestTemplate();
-                ResponseEntity<String> response = restTemplate.postForEntity(domain+"/credential_definition/" + CredentialDefinitionType.TRANSCPRIPT + "/schema/" + schemaId, null, String.class);
+                ResponseEntity<String> response = restTemplate.postForEntity(domain+"/credential_definition/TRANSCRIPT/schema/" + schemaId, null, String.class);
 
                 System.out.println(response.getBody());
             } catch (Exception e) {
