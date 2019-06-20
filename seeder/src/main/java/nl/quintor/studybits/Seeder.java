@@ -145,7 +145,7 @@ public class Seeder {
         public void run() {
             try {
                 RestTemplate restTemplate = new RestTemplate();
-                ResponseEntity<String> response = restTemplate.postForEntity(domain+"/bootstrap/credential_definition/" + schemaId, null, String.class);
+                ResponseEntity<String> response = restTemplate.postForEntity(domain+"/credential_definition/" + CredentialDefinitionType.TRANSCPRIPT + "/schema/" + schemaId, null, String.class);
 
                 System.out.println(response.getBody());
             } catch (Exception e) {
