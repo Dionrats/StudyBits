@@ -27,7 +27,7 @@ public class IndyConfiguration {
     @Value("${nl.quintor.studybits.university.name}")
     private String universityName;
 
-    private boolean shouldReload = false;
+    private boolean shouldReload = true;
 
 
     @Bean
@@ -66,6 +66,7 @@ public class IndyConfiguration {
         String name = universityName.replace(" ", "");
         String seed = StringUtils.leftPad(name, 32, '0');
         String poolName = "default_pool";
+
         if(shouldReload){
             poolName = PoolUtils.createPoolLedgerConfig("10.40.121.141");
             return IndyWallet.create(new IndyPool(poolName), name, seed);
