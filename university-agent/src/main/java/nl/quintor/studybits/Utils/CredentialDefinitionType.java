@@ -1,6 +1,6 @@
 package nl.quintor.studybits.utils;
 
 public enum CredentialDefinitionType {
-    TRANSCPRIPT,
+    TRANSCRIPT,
     DOCUMENT
 }
