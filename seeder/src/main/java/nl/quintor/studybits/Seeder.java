@@ -1,6 +1,5 @@
 package nl.quintor.studybits;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import nl.quintor.studybits.indy.wrapper.IndyPool;
 import nl.quintor.studybits.indy.wrapper.IndyWallet;
 import nl.quintor.studybits.indy.wrapper.Issuer;
@@ -11,20 +10,18 @@ import nl.quintor.studybits.indy.wrapper.message.IndyMessageTypes;
 import nl.quintor.studybits.indy.wrapper.message.MessageEnvelope;
 import nl.quintor.studybits.indy.wrapper.message.MessageEnvelopeCodec;
 import nl.quintor.studybits.indy.wrapper.util.PoolUtils;
-import org.apache.commons.lang3.StringUtils;
+import nl.quintor.studybits.utils.CredentialDefinitionType;
 import org.hyperledger.indy.sdk.IndyException;
 import org.hyperledger.indy.sdk.pool.Pool;
 import org.springframework.http.ResponseEntity;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
-import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import org.springframework.web.client.RestTemplate;
-
 import nl.quintor.studybits.indy.wrapper.util.SeedUtil;
+
 
 import static nl.quintor.studybits.indy.wrapper.message.IndyMessageTypes.CONNECTION_REQUEST;
 import static nl.quintor.studybits.indy.wrapper.message.IndyMessageTypes.CONNECTION_RESPONSE;
