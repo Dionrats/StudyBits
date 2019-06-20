@@ -4,7 +4,7 @@ alias seeder='java -jar ./target/seeder-1.0-SNAPSHOT-jar-with-dependencies.jar'
 
 GRONINGEN_NAME="RijksuniversiteitGroningen"
 GRONINGEN_SEED="000000RijksuniversiteitGroningen"
-GRONINGEN_DOMAIN="http://10.40.121.141:8080"
+GRONINGEN_DOMAIN="http://10.40.121.131:8080"
 GENT_NAME="UniversiteitGent"
 GENT_SEED="0000000000000000UniversiteitGent"
 # Create steward

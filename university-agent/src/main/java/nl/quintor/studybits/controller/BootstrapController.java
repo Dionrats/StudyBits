@@ -51,9 +51,9 @@ public class BootstrapController {
     @PostMapping("/credential_definition/{credDefType}/schema/{schemaId}")
     public String createCredentialDefinition(@PathVariable("schemaId") String schemaId, @PathVariable("credDefType") String type) throws IndyException, ExecutionException, InterruptedException, JsonProcessingException {
         try {
-            String credDefId = credentialDefinitionService.createCredentialDefintion(schemaId, CredentialDefinitionType.valueOf(type));
-            credentialOfferService.createCredentialOffer(credDefId, student.getStudentDid());
-            return credDefId;
+            String credentialDefintion = credentialDefinitionService.createCredentialDefintion(schemaId, CredentialDefinitionType.valueOf(type));
+            credentialOfferService.createCredentialOffer(credentialDefintion, student.getStudentDid());
+            return credentialDefintion;
         }
         catch (ExecutionException e) {
             // This is totally fine
