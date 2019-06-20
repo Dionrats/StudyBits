@@ -2,6 +2,7 @@ package nl.quintor.studybits.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
+import nl.quintor.studybits.entity.CredentialOffer;
 import nl.quintor.studybits.entity.Student;
 import nl.quintor.studybits.indy.wrapper.Issuer;
 import nl.quintor.studybits.indy.wrapper.TrustAnchor;
@@ -11,13 +12,13 @@ import nl.quintor.studybits.indy.wrapper.message.*;
 import nl.quintor.studybits.indy.wrapper.util.JSONUtil;
 import org.apache.commons.lang3.NotImplementedException;
 import org.hyperledger.indy.sdk.IndyException;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import org.springframework.security.access.AccessDeniedException;
@@ -44,6 +45,8 @@ public class AgentService {
     private ExchangePositionService exchangePositionService;
     @Autowired
     private MessageEnvelopeCodec messageEnvelopeCodec;
+    @Autowired
+    private ModelMapper mapper;
 
     @Value("${nl.quintor.studybits.university.name}")
     private String universityName;
@@ -88,19 +91,14 @@ public class AgentService {
 
     public MessageEnvelope<CredentialOfferList> getCredentialOffers(String did) throws JsonProcessingException, IndyException, ExecutionException, InterruptedException {
         log.debug("Getting credential offers for did {}", did);
-        CredentialOfferList credentialOffers = new CredentialOfferList();
         Student student = studentService.getStudentByStudentDid(did);
-
         log.debug("Found student for which to get credential offers {}", student);
-        if (student.getTranscript() != null && !student.getTranscript().isProven()) {
-            CredentialOffer credentialOffer = universityIssuer.createCredentialOffer(credentialDefinitionService.getCredentialDefinitionId(), did).get();
-            credentialOffers.addCredentialOffer(credentialOffer);
-            log.debug("Returning credentialOffers {}", credentialOffers);
-            return messageEnvelopeCodec.encryptMessage(credentialOffers, IndyMessageTypes.CREDENTIAL_OFFERS, did).get();
+        List<nl.quintor.studybits.indy.wrapper.dto.CredentialOffer> credentialOfferDTOs = new ArrayList<>();
+        for(CredentialOffer offer : student.getCredentialOffers()) {
+            credentialOfferDTOs.add(mapper.map(offer, nl.quintor.studybits.indy.wrapper.dto.CredentialOffer.class));
         }
-
-
-        log.debug("Student had no credential offers");
+        CredentialOfferList credentialOffers = new CredentialOfferList(universityIssuer.getMainDid(), credentialOfferDTOs, null);
+        log.debug("Returning credentialOffers {}", credentialOffers);
         return messageEnvelopeCodec.encryptMessage(credentialOffers, IndyMessageTypes.CREDENTIAL_OFFERS, did).get();
     }
 

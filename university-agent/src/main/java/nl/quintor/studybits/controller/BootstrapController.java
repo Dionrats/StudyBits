@@ -7,7 +7,9 @@ import nl.quintor.studybits.entity.Transcript;
 import nl.quintor.studybits.repository.ExchangePositionRepository;
 import nl.quintor.studybits.repository.StudentRepository;
 import nl.quintor.studybits.service.CredentialDefinitionService;
+import nl.quintor.studybits.service.CredentialOfferService;
 import nl.quintor.studybits.service.ExchangePositionService;
+import nl.quintor.studybits.utils.CredentialDefinitionType;
 import org.hyperledger.indy.sdk.IndyException;
 import org.hyperledger.indy.sdk.anoncreds.CredDefAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,9 @@ public class BootstrapController {
     private CredentialDefinitionService credentialDefinitionService;
 
     @Autowired
+    private CredentialOfferService credentialOfferService;
+
+    @Autowired
     private StudentRepository studentRepository;
 
     @Autowired
@@ -36,15 +41,19 @@ public class BootstrapController {
     @Autowired
     private ExchangePositionService exchangePositionService;
 
+
     @Value("${nl.quintor.studybits.university.name}")
     private String universityName;
 
     private String credDefId;
+    private Student student;
 
-    @PostMapping("/credential_definition/{schemaId}")
-    public String createCredentialDefinition(@PathVariable("schemaId") String schemaId) throws IndyException, ExecutionException, InterruptedException, JsonProcessingException {
+    @PostMapping("/credential_definition/{credDefType}/schema/{schemaId}")
+    public String createCredentialDefinition(@PathVariable("schemaId") String schemaId, @PathVariable("credDefType") CredentialDefinitionType type) throws IndyException, ExecutionException, InterruptedException, JsonProcessingException {
         try {
-            return credentialDefinitionService.createCredentialDefintion(schemaId);
+            String credDefId = credentialDefinitionService.createCredentialDefintion(schemaId, type);
+            credentialOfferService.createCredentialOffer(credDefId, student.getStudentDid());
+            return credDefId;
         }
         catch (ExecutionException e) {
             // This is totally fine
@@ -64,7 +73,7 @@ public class BootstrapController {
         student.setPassword(bCryptPasswordEncoder.encode("test1234"));
         student.setStudentDid(null);
         student.setTranscript(new Transcript("Bachelor of Arts, Marketing", "enrolled", "8", false));
-
+        this.student = student;
         studentRepository.saveAndFlush(student);
 
         return studentRepository.getStudentByStudentId(studentId).toString();

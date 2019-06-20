@@ -1,7 +1,4 @@
-package nl.quintor.studybits.Utils;
-
-import nl.quintor.studybits.entity.Document;
-import nl.quintor.studybits.entity.DocumentDTO;
+package nl.quintor.studybits.utils;
 
 public class DocumentUtils {
 

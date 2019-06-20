@@ -17,9 +17,9 @@ seeder onboard $GENT_SEED $GENT_NAME $GENT_DID
 
 SCHEMA_ID=$(seeder schema)
 
+seeder student $GRONINGEN_DOMAIN 12345678
 CRED_DEF_ID=$(seeder cred-def $GRONINGEN_DOMAIN $SCHEMA_ID)
 echo "CRED DEF ID $CRED_DEF_ID"
-seeder student $GRONINGEN_DOMAIN 12345678
 
 seeder exchange-position $GRONINGEN_DOMAIN $CRED_DEF_ID
 

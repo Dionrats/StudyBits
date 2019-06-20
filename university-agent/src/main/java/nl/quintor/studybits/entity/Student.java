@@ -3,10 +3,9 @@ package nl.quintor.studybits.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -47,6 +46,9 @@ public class Student {
 
     @OneToMany(mappedBy = "id")
     private Set<Document> documents;
+
+    @OneToMany(mappedBy = "id")
+    private List<CredentialOffer> credentialOffers;
 
     public boolean hasDid() {
         if(this.getStudentDid() != null){

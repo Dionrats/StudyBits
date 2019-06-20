@@ -5,7 +5,6 @@ import nl.quintor.studybits.entity.Student;
 import nl.quintor.studybits.exceptions.UserAlreadyExistAuthenticationException;
 import nl.quintor.studybits.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
