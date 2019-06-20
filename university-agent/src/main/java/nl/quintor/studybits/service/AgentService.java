@@ -2,7 +2,7 @@ package nl.quintor.studybits.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
-import nl.quintor.studybits.entity.CredentialOffer;
+import nl.quintor.studybits.entity.Document;
 import nl.quintor.studybits.entity.Student;
 import nl.quintor.studybits.indy.wrapper.Issuer;
 import nl.quintor.studybits.indy.wrapper.TrustAnchor;
@@ -10,6 +10,7 @@ import nl.quintor.studybits.indy.wrapper.Verifier;
 import nl.quintor.studybits.indy.wrapper.dto.*;
 import nl.quintor.studybits.indy.wrapper.message.*;
 import nl.quintor.studybits.indy.wrapper.util.JSONUtil;
+import nl.quintor.studybits.utils.CredentialDefinitionType;
 import org.apache.commons.lang3.NotImplementedException;
 import org.hyperledger.indy.sdk.IndyException;
 import org.modelmapper.ModelMapper;
@@ -93,11 +94,19 @@ public class AgentService {
         log.debug("Getting credential offers for did {}", did);
         Student student = studentService.getStudentByStudentDid(did);
         log.debug("Found student for which to get credential offers {}", student);
-        List<nl.quintor.studybits.indy.wrapper.dto.CredentialOffer> credentialOfferDTOs = new ArrayList<>();
-        for(CredentialOffer offer : student.getCredentialOffers()) {
-            credentialOfferDTOs.add(mapper.map(offer, nl.quintor.studybits.indy.wrapper.dto.CredentialOffer.class));
+
+        CredentialOfferList credentialOffers = new CredentialOfferList();
+
+        if (student.getTranscript() != null && !student.getTranscript().isProven()) {
+            CredentialOffer credentialOffer = universityIssuer.createCredentialOffer(credentialDefinitionService.getCredentialDefinitionId(CredentialDefinitionType.TRANSCRIPT), did).get();
+            credentialOffers.addCredentialOffer(credentialOffer);
         }
-        CredentialOfferList credentialOffers = new CredentialOfferList(universityIssuer.getMainDid(), credentialOfferDTOs, null);
+
+        for (Document document : student.getDocuments()) {
+            CredentialOffer credentialOffer = universityIssuer.createCredentialOffer(credentialDefinitionService.getCredentialDefinitionId(CredentialDefinitionType.DOCUMENT), did).get();
+            credentialOffers.addCredentialOffer(credentialOffer);
+        }
+
         log.debug("Returning credentialOffers {}", credentialOffers);
         return messageEnvelopeCodec.encryptMessage(credentialOffers, IndyMessageTypes.CREDENTIAL_OFFERS, did).get();
     }

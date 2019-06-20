@@ -1,5 +1,6 @@
 package nl.quintor.studybits;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import nl.quintor.studybits.indy.wrapper.IndyPool;
 import nl.quintor.studybits.indy.wrapper.IndyWallet;
 import nl.quintor.studybits.indy.wrapper.Issuer;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import org.springframework.web.client.RestTemplate;
 import nl.quintor.studybits.indy.wrapper.util.SeedUtil;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 
 import static nl.quintor.studybits.indy.wrapper.message.IndyMessageTypes.CONNECTION_REQUEST;
@@ -113,18 +115,36 @@ public class Seeder {
         }
     }
 
-    @Command(name = "schema", description = "Define schema and return schema ID.")
-    static class SchemaCommand implements Runnable {
+    abstract static class SchemaCommand implements Runnable {
         @Override
         public void run() {
             try {
                 IndyWallet stewardWallet = IndyWallet.open(indyPool, "steward", "000000000000000000000000Steward1", "Th7MpTaRZVRYnPiabds81Y");
                 Issuer trustAnchorIssuer = new Issuer(stewardWallet);
-                String schemaId = trustAnchorIssuer.createAndSendSchema("Transcript", "1.0", "first_name", "last_name", "degree", "status", "average").get();
-                System.out.println(schemaId);
+
+                System.out.println(getSchemaId(trustAnchorIssuer));
             } catch (Exception e) {
                 exception(e);
             }
+        }
+        protected String getSchemaId(Issuer trustAnchorIssuer) throws IndyException, ExecutionException, InterruptedException, JsonProcessingException {
+            throw new NotImplementedException();
+        }
+    }
+
+    @Command(name = "schema-transcript", description = "Define transcriptschema and return schema ID.")
+    static class SchemaCommandTranscript extends SchemaCommand {
+        @Override
+        protected String getSchemaId(Issuer trustAnchorIssuer) throws IndyException, ExecutionException, InterruptedException, JsonProcessingException {
+            return trustAnchorIssuer.createAndSendSchema("Transcript", "1.0", "first_name", "last_name", "degree", "status", "average").get();
+        }
+    }
+
+    @Command(name = "schema-document", description = "Define documentschema and return schema ID.")
+    static class SchemaCommandDocument extends SchemaCommand {
+        @Override
+        protected String getSchemaId(Issuer trustAnchorIssuer) throws IndyException, ExecutionException, InterruptedException, JsonProcessingException {
+            return trustAnchorIssuer.createAndSendSchema("Document", "1.0", "name", "type", "hash", "enc_type").get();
         }
     }
 

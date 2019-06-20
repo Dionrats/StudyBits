@@ -52,7 +52,7 @@ public class BootstrapController {
     public String createCredentialDefinition(@PathVariable("schemaId") String schemaId, @PathVariable("credDefType") String type) throws IndyException, ExecutionException, InterruptedException, JsonProcessingException {
         try {
             String credentialDefintion = credentialDefinitionService.createCredentialDefintion(schemaId, CredentialDefinitionType.valueOf(type));
-            credentialOfferService.createCredentialOffer(credentialDefintion, student.getStudentDid());
+            //credentialOfferService.createCredentialOffer(credentialDefintion, student.getStudentDid());
             return credentialDefintion;
         }
         catch (ExecutionException e) {

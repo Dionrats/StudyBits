@@ -15,13 +15,18 @@ GENT_DID=$(seeder did $GENT_SEED $GENT_NAME)
 seeder onboard $GRONINGEN_SEED $GRONINGEN_NAME $GRONINGEN_DID
 seeder onboard $GENT_SEED $GENT_NAME $GENT_DID
 
-SCHEMA_ID=$(seeder schema)
+SCHEMA_ID_TRANSCRIPT=$(seeder schema-transcript)
+SCHEMA_ID_DOCUMENT=$(seeder schema-document)
+
 
 seeder student $GRONINGEN_DOMAIN 12345678
-CRED_DEF_ID=$(seeder cred-def $GRONINGEN_DOMAIN $SCHEMA_ID)
-echo "CRED DEF ID $CRED_DEF_ID"
+CRED_DEF_ID_TRANSCRIPT=$(seeder cred-def $GRONINGEN_DOMAIN $SCHEMA_ID_TRANSCRIPT)
+echo "CRED DEF ID $CRED_DEF_ID_TRANSCRIPT"
 
-seeder exchange-position $GRONINGEN_DOMAIN $CRED_DEF_ID
+CRED_DEF_ID_DOCUMENT=$(seeder cred-def $GRONINGEN_DOMAIN $SCHEMA_ID_DOCUMENT)
+echo "CRED DEF ID $CRED_DEF_ID_DOCUMENT"
+
+seeder exchange-position $GRONINGEN_DOMAIN $CRED_DEF_ID_TRANSCRIPT
 
 touch /finished.txt
 
