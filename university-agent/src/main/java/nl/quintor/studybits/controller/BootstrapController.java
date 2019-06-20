@@ -49,9 +49,9 @@ public class BootstrapController {
     private Student student;
 
     @PostMapping("/credential_definition/{credDefType}/schema/{schemaId}")
-    public String createCredentialDefinition(@PathVariable("schemaId") String schemaId, @PathVariable("credDefType") CredentialDefinitionType type) throws IndyException, ExecutionException, InterruptedException, JsonProcessingException {
+    public String createCredentialDefinition(@PathVariable("schemaId") String schemaId, @PathVariable("credDefType") String type) throws IndyException, ExecutionException, InterruptedException, JsonProcessingException {
         try {
-            String credDefId = credentialDefinitionService.createCredentialDefintion(schemaId, type);
+            String credDefId = credentialDefinitionService.createCredentialDefintion(schemaId, CredentialDefinitionType.valueOf(type));
             credentialOfferService.createCredentialOffer(credDefId, student.getStudentDid());
             return credDefId;
         }
