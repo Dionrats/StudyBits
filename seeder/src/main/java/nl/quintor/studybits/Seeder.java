@@ -218,7 +218,7 @@ public class Seeder {
         e.printStackTrace();
     }
 
-    @Command(name = "", subcommands = {SeedCommand.class, DidCommand.class, VerkeyCommand.class, OnboardCommand.class, SchemaCommand.class, CredDefCommand.class, ExchangePositionCommand.class, StudentCommand.class})
+    @Command(name = "", subcommands = {SeedCommand.class, DidCommand.class, VerkeyCommand.class, OnboardCommand.class, SchemaCommandTranscript.class, SchemaCommandDocument.class, CredDefCommand.class, ExchangePositionCommand.class, StudentCommand.class})
     static class ParentCommand implements Runnable {
         @Override
         public void run() {
