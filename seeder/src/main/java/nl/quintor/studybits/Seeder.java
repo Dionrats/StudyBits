@@ -157,11 +157,14 @@ public class Seeder {
         @Parameters(index = "1", paramLabel = "<schema-definition-id>", description = "Credential definition ID")
         private String schemaId;
 
+        @Parameters(index = "2", paramLabel = "<credential-type>", description = "Type schema from the credential definition")
+        private String type;
+
         @Override
         public void run() {
             try {
                 RestTemplate restTemplate = new RestTemplate();
-                ResponseEntity<String> response = restTemplate.postForEntity(domain+"/bootstrap/credential_definition/TRANSCRIPT/schema/" + schemaId, null, String.class);
+                ResponseEntity<String> response = restTemplate.postForEntity(domain+"/bootstrap/credential_definition/" + type + "/schema/" + schemaId, null, String.class);
 
                 System.out.println(response.getBody());
             } catch (Exception e) {
