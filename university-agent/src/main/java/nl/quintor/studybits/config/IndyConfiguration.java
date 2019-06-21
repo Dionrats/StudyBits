@@ -5,25 +5,24 @@ import nl.quintor.studybits.indy.wrapper.*;
 import nl.quintor.studybits.indy.wrapper.message.IndyMessageTypes;
 import nl.quintor.studybits.indy.wrapper.message.MessageEnvelopeCodec;
 import nl.quintor.studybits.indy.wrapper.util.PoolUtils;
-import nl.quintor.studybits.indy.wrapper.util.SeedUtil;
 import nl.quintor.studybits.messages.StudyBitsMessageTypes;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.hyperledger.indy.sdk.did.Did;
+import org.hyperledger.indy.sdk.IndyException;
 import org.hyperledger.indy.sdk.pool.Pool;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.io.File;
-import java.nio.file.Paths;
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 @Configuration
 @Slf4j
 public class IndyConfiguration {
+    @Value("${nl.quintor.studybits.university.pool}")
+    private String testPoolIp;
     @Value("${nl.quintor.studybits.university.name}")
     private String universityName;
 
@@ -31,7 +30,7 @@ public class IndyConfiguration {
 
 
     @Bean
-    public TrustAnchor universityTrustAnchor(IndyWallet universityWallet) throws Exception {
+    public TrustAnchor universityTrustAnchor(IndyWallet universityWallet) {
         return new TrustAnchor(universityWallet);
     }
 
@@ -56,7 +55,8 @@ public class IndyConfiguration {
     }
 
     @Bean
-    public IndyWallet universityWallet() throws Exception {
+    @Primary
+    public IndyWallet universityWallet() throws IndyException, ExecutionException, InterruptedException, IOException {
         Pool.setProtocolVersion(PoolUtils.PROTOCOL_VERSION).get();
         StudyBitsMessageTypes.init();
         IndyMessageTypes.init();
@@ -68,7 +68,7 @@ public class IndyConfiguration {
         String poolName = "default_pool";
 
         if(shouldReload){
-            poolName = PoolUtils.createPoolLedgerConfig("10.40.121.141");
+            poolName = PoolUtils.createPoolLedgerConfig(testPoolIp);
             return IndyWallet.create(new IndyPool(poolName), name, seed);
         }
         return IndyWallet.open(new IndyPool(poolName), name, seed, "SYqJSzcfsJMhSt7qjcQ8CC");

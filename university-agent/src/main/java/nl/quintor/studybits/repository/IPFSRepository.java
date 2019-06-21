@@ -5,6 +5,7 @@ import io.ipfs.api.NamedStreamable;
 import io.ipfs.multihash.Multihash;
 import lombok.extern.slf4j.Slf4j;
 import nl.quintor.studybits.entity.Document;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Repository;
@@ -26,30 +27,24 @@ public class IPFSRepository {
         ipfs = new IPFS(env.getProperty("IPFS.node.host"), Integer.valueOf(env.getProperty("IPFS.node.port")));
     }
 
-    public Document getFile(String key) {
+    public byte[] getFile(String key) {
         Multihash filePointer = Multihash.fromBase58(key);
         try {
-            byte[] data = ipfs.cat(filePointer);
+            return ipfs.cat(filePointer);
 
-            return deserialize(data);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
-
-        return null;
+        return new byte[]{};
     }
 
-    public String storeFile(Document document) {
-        NamedStreamable.ByteArrayWrapper file = new NamedStreamable.ByteArrayWrapper(serialize(document));
+    public String storeFile(byte[] data) {
+        NamedStreamable.ByteArrayWrapper file = new NamedStreamable.ByteArrayWrapper(data);
         try {
-            String address = ipfs.add(file).get(0).hash.toBase58();
-            log.debug("Storing file: {}, at location: {}", document.getName(), address);
-
-            return address;
+            return ipfs.add(file).get(0).hash.toBase58();
         } catch (IOException e) {
             log.error(e.getMessage());
         }
-
         return null;
     }
 }

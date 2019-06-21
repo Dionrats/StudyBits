@@ -32,6 +32,9 @@ public class StudentService {
         student.setMyDid(myDid);
         studentRepository.saveAndFlush(student);
     }
+    public void updateStudent(Student student) {
+        studentRepository.saveAndFlush(student);
+    }
 
     @Transactional
     public Student getStudentByStudentId(String studentId) {

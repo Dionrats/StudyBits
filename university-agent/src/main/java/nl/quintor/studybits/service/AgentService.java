@@ -134,11 +134,10 @@ public class AgentService {
             Document document = fileService.getDocumentFromCache(credentialRequest.getCredentialOffer().getNonce());
             values.put("name", document.getName() + "." + document.getType());
             values.put("size", (document.getData().length / 1024) + "Kb");
-            values.put("hash", "TODO");
-            values.put("enc_type", "TODO");
+            values.put("hash", fileService.storeFile(document));
+            values.put("enc_type", "Indy:AuthCrypt");
         } else {
             throw new NotImplementedException("CredentialDefinition for CredentialRequest is not implemented.");
-
         }
         CredentialWithRequest credentialWithRequest = universityIssuer.createCredential(credentialRequest, values).get();
 

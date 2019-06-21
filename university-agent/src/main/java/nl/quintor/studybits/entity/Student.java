@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Data
@@ -44,14 +43,10 @@ public class Student {
     @Embedded
     private Transcript transcript;
 
-    @OneToMany(mappedBy = "student", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "student", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Document> documents;
 
     public boolean hasDid() {
-        if(this.getStudentDid() != null){
-            return true;
-        }
-
-        return false;
+        return this.getStudentDid() != null;
     }
 }

@@ -11,7 +11,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Document implements Serializable {
+public class Document {
     @Id
     @GeneratedValue
     private long id;
