@@ -10,10 +10,10 @@ import nl.quintor.studybits.indy.wrapper.Verifier;
 import nl.quintor.studybits.indy.wrapper.dto.*;
 import nl.quintor.studybits.indy.wrapper.message.*;
 import nl.quintor.studybits.indy.wrapper.util.JSONUtil;
+import nl.quintor.studybits.repository.FileRepository;
 import nl.quintor.studybits.utils.CredentialDefinitionType;
 import org.apache.commons.lang3.NotImplementedException;
 import org.hyperledger.indy.sdk.IndyException;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -47,7 +47,7 @@ public class AgentService {
     @Autowired
     private MessageEnvelopeCodec messageEnvelopeCodec;
     @Autowired
-    private ModelMapper mapper;
+    private FileRepository fileRepository;
 
     @Value("${nl.quintor.studybits.university.name}")
     private String universityName;
@@ -93,6 +93,7 @@ public class AgentService {
     public MessageEnvelope<CredentialOfferList> getCredentialOffers(String did) throws JsonProcessingException, IndyException, ExecutionException, InterruptedException {
         log.debug("Getting credential offers for did {}", did);
         Student student = studentService.getStudentByStudentDid(did);
+        List<Document> documents = fileRepository.getDocumentsByStudent_Id(student.getId());
         log.debug("Found student for which to get credential offers {}", student);
 
         CredentialOfferList credentialOffers = new CredentialOfferList();
@@ -102,7 +103,7 @@ public class AgentService {
             credentialOffers.addCredentialOffer(credentialOffer);
         }
 
-        for (Document document : student.getDocuments()) {
+        for (Document document : documents) {
             CredentialOffer credentialOffer = universityIssuer.createCredentialOffer(credentialDefinitionService.getCredentialDefinitionId(CredentialDefinitionType.DOCUMENT), did).get();
             credentialOffers.addCredentialOffer(credentialOffer);
         }

@@ -42,7 +42,8 @@ public class DocumentController {
             throw new DocumentNotProvidedException("Document was not included in request");
         }
         Document document = fileService.cacheFile(convertToEntity(dto));
-        credentialOfferService.createCredentialOffer(credentialDefinitionService.getCredentialDefinitionId(CredentialDefinitionType.DOCUMENT), document.getStudent().getStudentDid());
+
+      //  credentialOfferService.createCredentialOffer(credentialDefinitionService.getCredentialDefinitionId(CredentialDefinitionType.DOCUMENT), document.getStudent().getStudentDid());
 
         JSONObject response = new JSONObject();
             response.put("code", HttpStatus.ACCEPTED);

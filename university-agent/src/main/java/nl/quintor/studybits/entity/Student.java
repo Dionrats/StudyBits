@@ -44,11 +44,8 @@ public class Student {
     @Embedded
     private Transcript transcript;
 
-    @OneToMany(mappedBy = "id")
-    private Set<Document> documents;
-
-    @OneToMany(mappedBy = "id")
-    private List<CredentialOffer> credentialOffers;
+    @OneToMany(mappedBy = "student", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Document> documents;
 
     public boolean hasDid() {
         if(this.getStudentDid() != null){

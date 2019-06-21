@@ -22,9 +22,19 @@ public class Document implements Serializable {
     @Column
     private byte[] data;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
+
+    @Override
+    public String toString() {
+        return "Document(id:" + id +
+                ", name:" + name +
+                ", type:" + type +
+                ", dataSize:" + data.length +
+                ", owner:" + student.getId();
+    }
+
 }
 
 
