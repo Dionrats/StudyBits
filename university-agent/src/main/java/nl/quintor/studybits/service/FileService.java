@@ -7,20 +7,20 @@ import nl.quintor.studybits.repository.IPFSRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
 public class FileService {
 
     private final IPFSRepository ipfsRepository;
     private final FileRepository fileRepository;
-    private final CredentialOfferService credentialOfferService;
 
 
     @Autowired
-    public FileService(IPFSRepository repository, FileRepository fileRepository, CredentialOfferService credentialOfferService) {
+    public FileService(IPFSRepository repository, FileRepository fileRepository) {
         this.ipfsRepository = repository;
         this.fileRepository = fileRepository;
-        this.credentialOfferService = credentialOfferService;
     }
 
     public String processFile(Document document) {
@@ -33,12 +33,17 @@ public class FileService {
         return fileRepository.saveAndFlush(document);
     }
 
-//    public void sendCredentialOffer(Document document) throws JsonProcessingException, IndyException, ExecutionException, InterruptedException {
-//        CredentialOffer offer = universityIssuer.createCredentialOffer(id, document.getStudent().getMyDid()).get();
+    public List<Document> getDocumentsFromCache(long studentId) {
+        return fileRepository.getDocumentsByStudent_Id(studentId);
+    }
 
+    public Document getDocumentFromCache(String nonce) {
+        return fileRepository.getDocumentByNonce(nonce);
+    }
 
-      //  offer.hashCode();
-   // }
+    public void updateDocument(Document document) {
+        fileRepository.saveAndFlush(document);
+    }
 
     public Document retrieveFile(String id) {
         return ipfsRepository.getFile(id);

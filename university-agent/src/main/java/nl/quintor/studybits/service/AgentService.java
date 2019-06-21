@@ -10,7 +10,6 @@ import nl.quintor.studybits.indy.wrapper.Verifier;
 import nl.quintor.studybits.indy.wrapper.dto.*;
 import nl.quintor.studybits.indy.wrapper.message.*;
 import nl.quintor.studybits.indy.wrapper.util.JSONUtil;
-import nl.quintor.studybits.repository.FileRepository;
 import nl.quintor.studybits.utils.CredentialDefinitionType;
 import org.apache.commons.lang3.NotImplementedException;
 import org.hyperledger.indy.sdk.IndyException;
@@ -28,6 +27,7 @@ import java.util.concurrent.ExecutionException;
 
 import static nl.quintor.studybits.indy.wrapper.message.IndyMessageTypes.*;
 import static nl.quintor.studybits.messages.StudyBitsMessageTypes.EXCHANGE_POSITIONS;
+import static nl.quintor.studybits.utils.CredentialDefinitionType.*;
 
 @Service
 @Slf4j
@@ -47,7 +47,7 @@ public class AgentService {
     @Autowired
     private MessageEnvelopeCodec messageEnvelopeCodec;
     @Autowired
-    private FileRepository fileRepository;
+    private FileService fileService;
 
     @Value("${nl.quintor.studybits.university.name}")
     private String universityName;
@@ -93,19 +93,22 @@ public class AgentService {
     public MessageEnvelope<CredentialOfferList> getCredentialOffers(String did) throws JsonProcessingException, IndyException, ExecutionException, InterruptedException {
         log.debug("Getting credential offers for did {}", did);
         Student student = studentService.getStudentByStudentDid(did);
-        List<Document> documents = fileRepository.getDocumentsByStudent_Id(student.getId());
+        List<Document> documents = fileService.getDocumentsFromCache(student.getId());
         log.debug("Found student for which to get credential offers {}", student);
 
         CredentialOfferList credentialOffers = new CredentialOfferList();
 
         if (student.getTranscript() != null && !student.getTranscript().isProven()) {
-            CredentialOffer credentialOffer = universityIssuer.createCredentialOffer(credentialDefinitionService.getCredentialDefinitionId(CredentialDefinitionType.TRANSCRIPT), did).get();
+            CredentialOffer credentialOffer = universityIssuer.createCredentialOffer(credentialDefinitionService.getCredentialDefinitionId(TRANSCRIPT), did).get();
             credentialOffers.addCredentialOffer(credentialOffer);
         }
 
         for (Document document : documents) {
-            CredentialOffer credentialOffer = universityIssuer.createCredentialOffer(credentialDefinitionService.getCredentialDefinitionId(CredentialDefinitionType.DOCUMENT), did).get();
+            CredentialOffer credentialOffer = universityIssuer.createCredentialOffer(credentialDefinitionService.getCredentialDefinitionId(DOCUMENT), did).get();
             credentialOffers.addCredentialOffer(credentialOffer);
+            document.setNonce(credentialOffer.getNonce());
+
+            fileService.updateDocument(document);
         }
 
         log.debug("Returning credentialOffers {}", credentialOffers);
@@ -115,18 +118,29 @@ public class AgentService {
     private MessageEnvelope handleCredentialRequest(MessageEnvelope<CredentialRequest> messageEnvelope) throws IndyException, ExecutionException, InterruptedException, UnsupportedEncodingException, JsonProcessingException {
         CredentialRequest credentialRequest = messageEnvelopeCodec.decryptMessage(messageEnvelope).get();
         log.debug("Decrypted request");
-        Student student = studentService.getStudentByStudentDid(messageEnvelope.getDid());
 
         Map<String, Object> values = new HashMap<>();
-        values.put("first_name", student.getFirstName());
-        values.put("last_name", student.getLastName());
-        values.put("degree", student.getTranscript().getDegree());
-        values.put("average", student.getTranscript().getAverage());
-        values.put("status", student.getTranscript().getStatus());
+        String credDefId = credentialRequest.getCredentialOffer().getCredDefId();
+        if(credDefId.equals(credentialDefinitionService.getCredentialDefinitionId(CredentialDefinitionType.TRANSCRIPT))) {
+            Student student = studentService.getStudentByStudentDid(messageEnvelope.getDid());
+            values.put("first_name", student.getFirstName());
+            values.put("last_name", student.getLastName());
+            values.put("degree", student.getTranscript().getDegree());
+            values.put("average", student.getTranscript().getAverage());
+            values.put("status", student.getTranscript().getStatus());
 
+            studentService.proveTranscript(student.getStudentId());
+        } else if(credDefId.equals(credentialDefinitionService.getCredentialDefinitionId(CredentialDefinitionType.DOCUMENT))) {
+            Document document = fileService.getDocumentFromCache(credentialRequest.getCredentialOffer().getNonce());
+            values.put("name", document.getName() + "." + document.getType());
+            values.put("size", (document.getData().length / 1024) + "Kb");
+            values.put("hash", "TODO");
+            values.put("enc_type", "TODO");
+        } else {
+            throw new NotImplementedException("CredentialDefinition for CredentialRequest is not implemented.");
+
+        }
         CredentialWithRequest credentialWithRequest = universityIssuer.createCredential(credentialRequest, values).get();
-
-        studentService.proveTranscript(student.getStudentId());
 
         return messageEnvelopeCodec.encryptMessage(credentialWithRequest, IndyMessageTypes.CREDENTIAL, messageEnvelope.getDid()).get();
     }

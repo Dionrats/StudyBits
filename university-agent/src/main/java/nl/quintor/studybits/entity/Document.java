@@ -21,6 +21,8 @@ public class Document implements Serializable {
     private String type;
     @Column
     private byte[] data;
+    @Column
+    private String nonce;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "student_id", nullable = false)

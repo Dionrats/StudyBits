@@ -144,7 +144,7 @@ public class Seeder {
     static class SchemaCommandDocument extends SchemaCommand {
         @Override
         protected String getSchemaId(Issuer trustAnchorIssuer) throws IndyException, ExecutionException, InterruptedException, JsonProcessingException {
-            return trustAnchorIssuer.createAndSendSchema("Document", "1.0", "name", "type", "hash", "enc_type").get();
+            return trustAnchorIssuer.createAndSendSchema("Document", "1.0", "name", "size", "hash", "enc_type").get();
         }
     }
 

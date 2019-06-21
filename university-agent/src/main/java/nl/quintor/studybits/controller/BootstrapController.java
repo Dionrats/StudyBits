@@ -7,7 +7,6 @@ import nl.quintor.studybits.entity.Transcript;
 import nl.quintor.studybits.repository.ExchangePositionRepository;
 import nl.quintor.studybits.repository.StudentRepository;
 import nl.quintor.studybits.service.CredentialDefinitionService;
-import nl.quintor.studybits.service.CredentialOfferService;
 import nl.quintor.studybits.service.ExchangePositionService;
 import nl.quintor.studybits.utils.CredentialDefinitionType;
 import org.hyperledger.indy.sdk.IndyException;
@@ -29,8 +28,6 @@ public class BootstrapController {
     @Autowired
     private CredentialDefinitionService credentialDefinitionService;
 
-    @Autowired
-    private CredentialOfferService credentialOfferService;
 
     @Autowired
     private StudentRepository studentRepository;
@@ -46,7 +43,6 @@ public class BootstrapController {
     private String universityName;
 
     private String credDefId;
-    private Student student;
 
     @PostMapping("/credential_definition/{credDefType}/schema/{schemaId}")
     public String createCredentialDefinition(@PathVariable("schemaId") String schemaId, @PathVariable("credDefType") String type) throws IndyException, ExecutionException, InterruptedException, JsonProcessingException {
@@ -71,7 +67,6 @@ public class BootstrapController {
         student.setPassword(bCryptPasswordEncoder.encode("test1234"));
         student.setStudentDid(null);
         student.setTranscript(new Transcript("Bachelor of Arts, Marketing", "enrolled", "8", false));
-        this.student = student;
         studentRepository.saveAndFlush(student);
 
         return studentRepository.getStudentByStudentId(studentId).toString();

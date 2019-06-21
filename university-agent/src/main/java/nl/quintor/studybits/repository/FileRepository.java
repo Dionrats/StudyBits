@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface FileRepository extends JpaRepository<Document, Long> {
     List<Document> getDocumentsByStudent_Id(long studentId);
+    Document getDocumentByNonce(String nonce);
 }
