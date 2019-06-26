@@ -3,6 +3,7 @@ package nl.quintor.studybits.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import nl.quintor.studybits.indy.wrapper.dto.CredentialOffer;
 import org.json.JSONObject;
 import org.springframework.web.multipart.MultipartFile;
 

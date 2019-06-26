@@ -10,6 +10,7 @@ import nl.quintor.studybits.indy.wrapper.Verifier;
 import nl.quintor.studybits.indy.wrapper.dto.*;
 import nl.quintor.studybits.indy.wrapper.message.*;
 import nl.quintor.studybits.indy.wrapper.util.JSONUtil;
+import nl.quintor.studybits.messages.StudyBitsMessageTypes;
 import nl.quintor.studybits.utils.CredentialDefinitionType;
 import org.apache.commons.lang3.NotImplementedException;
 import org.hyperledger.indy.sdk.IndyException;
@@ -26,6 +27,7 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 import static nl.quintor.studybits.indy.wrapper.message.IndyMessageTypes.*;
+import static nl.quintor.studybits.messages.StudyBitsMessageTypes.DOCUMENT_OFFERS;
 import static nl.quintor.studybits.messages.StudyBitsMessageTypes.EXCHANGE_POSITIONS;
 import static nl.quintor.studybits.utils.CredentialDefinitionType.*;
 
@@ -61,9 +63,10 @@ public class AgentService {
 
             if(requestedMessageType.equals(CREDENTIAL_OFFERS)) {
                 return getCredentialOffers(messageEnvelope.getDid());
-            }
-            else if(requestedMessageType.equals(EXCHANGE_POSITIONS)) {
+            } else if(requestedMessageType.equals(EXCHANGE_POSITIONS)) {
                 return exchangePositionService.getAll(messageEnvelope.getDid());
+            }else if(requestedMessageType.equals(DOCUMENT_OFFERS)) {
+                return getDocumentOffers(messageEnvelope.getDid());
             }
         }
         else if (messageTypeURN.equals(CREDENTIAL_REQUEST.getURN())) {
@@ -90,10 +93,29 @@ public class AgentService {
         return messageEnvelopeCodec.encryptMessage(connectionResponse, IndyMessageTypes.CONNECTION_RESPONSE, connectionRequest.getDid()).get();
     }
 
+    private MessageEnvelope<CredentialOfferList> getDocumentOffers(String did) throws JsonProcessingException, IndyException, ExecutionException, InterruptedException {
+        log.debug("Getting document offers for did {}", did);
+        Student student = studentService.getStudentByStudentDid(did);
+        List<Document> documents = fileService.getDocumentsFromCache(student.getId());
+        log.debug("Found student for which to get document offers {}", student);
+
+        CredentialOfferList documentOffers = new CredentialOfferList();
+
+        for (Document document : documents) {
+            CredentialOffer documentOffer = universityIssuer.createCredentialOffer(credentialDefinitionService.getCredentialDefinitionId(DOCUMENT), did).get();
+            documentOffers.addCredentialOffer(documentOffer);
+            document.setNonce(documentOffer.getNonce());
+
+            fileService.updateDocument(document);
+        }
+
+        log.debug("Returning documentOffers {}", documentOffers);
+        return messageEnvelopeCodec.encryptMessage(documentOffers, StudyBitsMessageTypes.DOCUMENT_OFFERS, did).get();
+    }
+
     public MessageEnvelope<CredentialOfferList> getCredentialOffers(String did) throws JsonProcessingException, IndyException, ExecutionException, InterruptedException {
         log.debug("Getting credential offers for did {}", did);
         Student student = studentService.getStudentByStudentDid(did);
-        List<Document> documents = fileService.getDocumentsFromCache(student.getId());
         log.debug("Found student for which to get credential offers {}", student);
 
         CredentialOfferList credentialOffers = new CredentialOfferList();
@@ -101,14 +123,6 @@ public class AgentService {
         if (student.getTranscript() != null && !student.getTranscript().isProven()) {
             CredentialOffer credentialOffer = universityIssuer.createCredentialOffer(credentialDefinitionService.getCredentialDefinitionId(TRANSCRIPT), did).get();
             credentialOffers.addCredentialOffer(credentialOffer);
-        }
-
-        for (Document document : documents) {
-            CredentialOffer credentialOffer = universityIssuer.createCredentialOffer(credentialDefinitionService.getCredentialDefinitionId(DOCUMENT), did).get();
-            credentialOffers.addCredentialOffer(credentialOffer);
-            document.setNonce(credentialOffer.getNonce());
-
-            fileService.updateDocument(document);
         }
 
         log.debug("Returning credentialOffers {}", credentialOffers);

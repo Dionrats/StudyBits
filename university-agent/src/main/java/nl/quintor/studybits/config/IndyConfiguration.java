@@ -74,3 +74,4 @@ public class IndyConfiguration {
         return IndyWallet.open(new IndyPool(poolName), name, seed, "SYqJSzcfsJMhSt7qjcQ8CC");
     }
 }
+
