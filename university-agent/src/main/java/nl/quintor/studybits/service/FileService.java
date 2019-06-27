@@ -7,6 +7,7 @@ import nl.quintor.studybits.indy.wrapper.IndyWallet;
 import nl.quintor.studybits.repository.FileRepository;
 import nl.quintor.studybits.repository.IPFSRepository;
 import org.hyperledger.indy.sdk.IndyException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,9 @@ public class FileService {
 
     public Document cacheFile(Document document) throws IndyException, ExecutionException, InterruptedException {
         //Asymmetric encryption of file using Student Pk and University Pk.
-        document.setData(wallet.authEncrypt(document.getData(), document.getStudent().getStudentDid()).get().getMessage());
+        JSONObject data = new JSONObject();
+        data.put("data", document.getData());
+        document.setData(wallet.authEncrypt(data.toString().getBytes(), document.getStudent().getStudentDid()).get().getMessage());
 
         return fileRepository.saveAndFlush(document);
     }
