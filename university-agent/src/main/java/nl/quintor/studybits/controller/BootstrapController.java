@@ -59,7 +59,7 @@ public class BootstrapController {
     }
 
     @PostMapping("/create_student/{studentId}")
-    public String createStudentPosition(@PathVariable("studentId") String studentId) throws JsonProcessingException {
+    public String createStudentPosition(@PathVariable("studentId") String studentId) {
         Student student = new Student();
         student.setStudentId(studentId);
         student.setFirstName("Lisa");

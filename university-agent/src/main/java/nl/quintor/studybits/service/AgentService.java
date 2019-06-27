@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import org.springframework.security.access.AccessDeniedException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
@@ -80,7 +79,7 @@ public class AgentService {
     }
 
     // Student sets up a connection with university agent
-    public MessageEnvelope<ConnectionResponse> login(MessageEnvelope<ConnectionRequest> messageEnvelope) throws IndyException, ExecutionException, InterruptedException, JsonProcessingException, AccessDeniedException {
+    public MessageEnvelope<ConnectionResponse> login(MessageEnvelope<ConnectionRequest> messageEnvelope) throws IndyException, ExecutionException, InterruptedException, JsonProcessingException {
         ConnectionRequest connectionRequest = messageEnvelopeCodec.decryptMessage(messageEnvelope).get();
 
         //Get studentID / current user
@@ -165,7 +164,7 @@ public class AgentService {
 
         Proof proof = messageEnvelopeCodec.decryptMessage(proofEnvelope).get();
         log.debug("Proof: {}", proof);
-        List<ProofAttribute> proofAttributes = universityVerifier.getVerifiedProofAttributes(proofRequest, proof, proofEnvelope.getDid()).get();
+        universityVerifier.getVerifiedProofAttributes(proofRequest, proof, proofEnvelope.getDid()).get();
 
 
         exchangePositionService.fullfillPosition(student.getExchangePosition().getId());

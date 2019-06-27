@@ -9,7 +9,6 @@ import nl.quintor.studybits.repository.IPFSRepository;
 import org.hyperledger.indy.sdk.IndyException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

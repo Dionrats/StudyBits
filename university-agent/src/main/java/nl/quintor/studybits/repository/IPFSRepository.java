@@ -4,16 +4,11 @@ import io.ipfs.api.IPFS;
 import io.ipfs.api.NamedStreamable;
 import io.ipfs.multihash.Multihash;
 import lombok.extern.slf4j.Slf4j;
-import nl.quintor.studybits.entity.Document;
-import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
-
-import static org.apache.commons.lang3.SerializationUtils.deserialize;
-import static org.apache.commons.lang3.SerializationUtils.serialize;
 
 @Slf4j
 @Repository("IPFS")

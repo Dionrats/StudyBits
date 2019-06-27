@@ -102,16 +102,12 @@ public class StudentService {
 
             return studentRepository.saveAndFlush(student);
         }
-        //TODO: Return this exception as response instead of a 401
         throw new UserAlreadyExistAuthenticationException("Student '"+id+"' already exists");
     }
 
     public boolean studentExists(String studentId) {
-        if(studentRepository.getStudentByStudentId(studentId) != null) {
-            return true;
-        }
+        return studentRepository.getStudentByStudentId(studentId) != null;
 
-        return false;
     }
 
     public Boolean matchPassword(String password, String hashedPassword) {

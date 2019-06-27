@@ -3,7 +3,6 @@ package nl.quintor.studybits.controller;
 import nl.quintor.studybits.entity.Document;
 import nl.quintor.studybits.entity.DocumentDTO;
 import nl.quintor.studybits.exceptions.DocumentNotProvidedException;
-import nl.quintor.studybits.indy.wrapper.IndyWallet;
 import nl.quintor.studybits.service.FileService;
 import org.hyperledger.indy.sdk.IndyException;
 import org.json.JSONObject;

@@ -7,10 +7,10 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.quintor.studybits.entity.ExchangePosition;
 import nl.quintor.studybits.entity.Student;
-import nl.quintor.studybits.indy.wrapper.IndyWallet;
 import nl.quintor.studybits.indy.wrapper.dto.AttributeInfo;
 import nl.quintor.studybits.indy.wrapper.dto.Filter;
 import nl.quintor.studybits.indy.wrapper.dto.ProofRequest;
+import nl.quintor.studybits.indy.wrapper.dto.Serializable;
 import nl.quintor.studybits.indy.wrapper.message.MessageEnvelope;
 import nl.quintor.studybits.indy.wrapper.message.MessageEnvelopeCodec;
 import nl.quintor.studybits.indy.wrapper.util.AsyncUtil;
@@ -102,7 +102,7 @@ public class ExchangePositionService {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ExchangePositionDto {
+    public static class ExchangePositionDto implements Serializable {
         private String name;
         private ProofRequest proofRequest;
         private boolean fulfilled;

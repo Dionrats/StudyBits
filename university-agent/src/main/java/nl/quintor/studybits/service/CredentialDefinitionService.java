@@ -12,7 +12,6 @@ import java.util.concurrent.ExecutionException;
 @Component
 public class CredentialDefinitionService {
 
-    //TODO enummap. Kan problemen veroorzaken, maybe?
     private EnumMap<CredentialDefinitionType, String> credentialDefinitionIds;
 
     private final Issuer universityIssuer;
