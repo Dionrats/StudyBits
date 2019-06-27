@@ -1,0 +1,10 @@
+version: 2 # CircleCI version
+jobs:
+  build:
+    docker:
+      # specify the version you desire here
+      - image: circleci/openjdk:11
+    working_directory: ~/repo
+    steps:
+      - run: ./.circleci.sh
+      - run: cd ./university-agent && mvn clean install -DskipTests sonar:sonar -Dsonar.projectKey=Dionrats_StudyBits -Dsonar.organization=dionrats-github -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN
