@@ -49,6 +49,11 @@ public class IndyConfiguration {
     }
 
     @Bean
+    public Prover universityProver(IndyWallet universityWallet) {
+        return new Prover(universityWallet, universityName.replace(" ", ""));
+    }
+
+    @Bean
     @Primary
     public IndyWallet universityWallet() throws IndyException, ExecutionException, InterruptedException, IOException {
         Pool.setProtocolVersion(PoolUtils.PROTOCOL_VERSION).get();

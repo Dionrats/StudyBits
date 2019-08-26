@@ -5,7 +5,6 @@ import io.ipfs.api.NamedStreamable;
 import io.ipfs.multihash.Multihash;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
@@ -14,13 +13,8 @@ import java.io.IOException;
 @Repository("IPFS")
 public class IPFSRepository {
 
-    private IPFS ipfs;
-
     @Autowired
-    public IPFSRepository(Environment env) {
-        log.debug("IPFS Node: {}", env.getProperty("ipfs.node.url"));
-        ipfs = new IPFS(env.getProperty("IPFS.node.host"), Integer.valueOf(env.getProperty("IPFS.node.port")));
-    }
+    private IPFS ipfs;
 
     public byte[] getFile(String key) {
         Multihash filePointer = Multihash.fromBase58(key);

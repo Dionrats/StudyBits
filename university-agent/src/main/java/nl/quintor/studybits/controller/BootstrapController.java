@@ -8,7 +8,7 @@ import nl.quintor.studybits.repository.ExchangePositionRepository;
 import nl.quintor.studybits.repository.StudentRepository;
 import nl.quintor.studybits.service.CredentialDefinitionService;
 import nl.quintor.studybits.service.ExchangePositionService;
-import nl.quintor.studybits.utils.CredentialDefinitionType;
+import nl.quintor.studybits.messages.CredentialDefinitionType;
 import org.hyperledger.indy.sdk.IndyException;
 import org.hyperledger.indy.sdk.anoncreds.CredDefAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,6 @@ public class BootstrapController {
 
     @Autowired
     private CredentialDefinitionService credentialDefinitionService;
-
 
     @Autowired
     private StudentRepository studentRepository;

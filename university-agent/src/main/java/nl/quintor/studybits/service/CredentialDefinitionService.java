@@ -2,7 +2,7 @@ package nl.quintor.studybits.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import nl.quintor.studybits.indy.wrapper.Issuer;
-import nl.quintor.studybits.utils.CredentialDefinitionType;
+import nl.quintor.studybits.messages.CredentialDefinitionType;
 import org.hyperledger.indy.sdk.IndyException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,11 +14,10 @@ public class CredentialDefinitionService {
 
     private EnumMap<CredentialDefinitionType, String> credentialDefinitionIds;
 
-    private final Issuer universityIssuer;
-
     @Autowired
-    public CredentialDefinitionService(Issuer universityIssuer) {
-        this.universityIssuer = universityIssuer;
+    private Issuer universityIssuer;
+
+    public CredentialDefinitionService() {
         credentialDefinitionIds = new EnumMap<>(CredentialDefinitionType.class);
     }
 

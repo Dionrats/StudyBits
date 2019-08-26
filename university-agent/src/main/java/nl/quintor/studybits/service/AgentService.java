@@ -11,7 +11,7 @@ import nl.quintor.studybits.indy.wrapper.dto.*;
 import nl.quintor.studybits.indy.wrapper.message.*;
 import nl.quintor.studybits.indy.wrapper.util.JSONUtil;
 import nl.quintor.studybits.messages.StudyBitsMessageTypes;
-import nl.quintor.studybits.utils.CredentialDefinitionType;
+import nl.quintor.studybits.messages.CredentialDefinitionType;
 import org.apache.commons.lang3.NotImplementedException;
 import org.hyperledger.indy.sdk.IndyException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +23,13 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import static nl.quintor.studybits.indy.wrapper.message.IndyMessageTypes.*;
 import static nl.quintor.studybits.messages.StudyBitsMessageTypes.DOCUMENT_OFFERS;
 import static nl.quintor.studybits.messages.StudyBitsMessageTypes.EXCHANGE_POSITIONS;
-import static nl.quintor.studybits.utils.CredentialDefinitionType.*;
+import static nl.quintor.studybits.messages.CredentialDefinitionType.*;
 
 @Service
 @Slf4j
@@ -92,7 +93,7 @@ public class AgentService {
         return messageEnvelopeCodec.encryptMessage(connectionResponse, IndyMessageTypes.CONNECTION_RESPONSE, connectionRequest.getDid()).get();
     }
 
-    private MessageEnvelope<CredentialOfferList> getDocumentOffers(String did) throws JsonProcessingException, IndyException, ExecutionException, InterruptedException {
+    public MessageEnvelope<CredentialOfferList> getDocumentOffers(String did) throws JsonProcessingException, IndyException, ExecutionException, InterruptedException {
         log.debug("Getting document offers for did {}", did);
         Student student = studentService.getStudentByStudentDid(did);
         List<Document> documents = fileService.getDocumentsFromCache(student.getId());
@@ -101,7 +102,8 @@ public class AgentService {
         CredentialOfferList documentOffers = new CredentialOfferList();
 
         for (Document document : documents) {
-            CredentialOffer documentOffer = universityIssuer.createCredentialOffer(credentialDefinitionService.getCredentialDefinitionId(DOCUMENT), did).get();
+            CompletableFuture<CredentialOffer> future = universityIssuer.createCredentialOffer(credentialDefinitionService.getCredentialDefinitionId(DOCUMENT), did);
+            CredentialOffer documentOffer = future.get();
             documentOffers.addCredentialOffer(documentOffer);
             document.setNonce(documentOffer.getNonce());
 
@@ -146,7 +148,7 @@ public class AgentService {
         } else if(credDefId.equals(credentialDefinitionService.getCredentialDefinitionId(CredentialDefinitionType.DOCUMENT))) {
             Document document = fileService.getDocumentFromCache(credentialRequest.getCredentialOffer().getNonce());
             values.put("name", document.getName() + "." + document.getType());
-            values.put("size", (document.getData().length / 1024) + "Kb");
+            values.put("size", document.getData().length);
             values.put("hash", fileService.storeFile(document));
             values.put("enc_type", "Indy:AuthCrypt");
         } else {

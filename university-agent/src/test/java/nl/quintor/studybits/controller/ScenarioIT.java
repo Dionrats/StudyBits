@@ -18,6 +18,7 @@ import org.hyperledger.indy.sdk.IndyException;
 import org.hyperledger.indy.sdk.pool.Pool;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
@@ -99,6 +100,7 @@ public class ScenarioIT {
     }
 
     @Test
+    @Ignore
     //Lisa registers to Gent for future purposes
     public void test1_Register() throws IndyException, ExecutionException, InterruptedException, IOException {
         StudyBitsMessageTypes.init();
@@ -123,6 +125,7 @@ public class ScenarioIT {
     }
     
     @Test
+    @Ignore
     //Connect to RUG while having a student login
     public void test2_Login() throws IndyException, ExecutionException, InterruptedException, IOException {
         StudyBitsMessageTypes.init();
@@ -158,6 +161,7 @@ public class ScenarioIT {
     }
 
     @Test
+    @Ignore
     public void test3_GetCredentialOffers() throws IndyException, ExecutionException, InterruptedException, IOException {
         //Request CREDENTIAL_OFFERS
         String getRequest = studentCodec.encryptMessage(CREDENTIAL_OFFERS.getURN(), GET_REQUEST, rugLisaDid).get().toJSON();
@@ -181,6 +185,7 @@ public class ScenarioIT {
     }
 
     @Test
+    @Ignore
     public void test4_CredentialRequest() throws IndyException, JsonProcessingException, ExecutionException, InterruptedException {
 
         CredentialRequest credentialRequest = studentProver.createCredentialRequest(rugLisaDid, studentCredentialOfferList.getCredentialOffers().get(0)).get();
@@ -220,6 +225,7 @@ public class ScenarioIT {
     }
 
     @Test
+    @Ignore
     public void test5_getExchangePositionsAndApply() throws JsonProcessingException, IndyException, ExecutionException, InterruptedException {
         String getRequest = studentCodec.encryptMessage(EXCHANGE_POSITIONS.getURN(), GET_REQUEST, gentLisaDid).get().toJSON();
         MessageEnvelope<AuthcryptableExchangePositions> exchangePositionsMessageEnvelope = givenCorrectHeaders(ENDPOINT_GENT)

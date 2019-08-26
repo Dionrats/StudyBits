@@ -1,4 +1,4 @@
-package nl.quintor.studybits.utils;
+package nl.quintor.studybits.messages;
 
 public enum CredentialDefinitionType {
     TRANSCRIPT,

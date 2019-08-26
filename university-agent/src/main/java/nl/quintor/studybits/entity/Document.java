@@ -3,8 +3,12 @@ package nl.quintor.studybits.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.json.JSONObject;
 
 import javax.persistence.*;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.Map;
 
 @Entity
 @Data
@@ -36,6 +40,21 @@ public class Document {
                 ", owner:" + student.getId();
     }
 
+    public JSONObject toJson() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("name", name + "." + type);
+        jsonObject.put("type", type);
+
+        JSONObject owner = new JSONObject();
+        owner.put("firstName", student.getFirstName());
+        owner.put("lastName", student.getLastName());
+        owner.put("id", student.getStudentId());
+
+        jsonObject.put("owner", owner);
+        jsonObject.put("targetDid", student.getStudentDid());
+        jsonObject.put("dataSize", (data.length / 1024) + "Kb");
+
+        return jsonObject;
+    }
+
 }
-
-
