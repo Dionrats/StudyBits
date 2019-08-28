@@ -3,9 +3,9 @@
 ## Table of contents
 1. [Introduction](#introduction)
 2. [Contributing](#contributing)
-    2.1 [Repository Structure](#structure)
-    2.2 [Development Setup](#dev)
-    2.3 [How to send a PR](#pullrequests)
+  2.1 [Repository Structure](#structure)
+  2.2 [Development Setup](#dev)
+  2.3 [How to send a PR](#pullrequests)
 3. [Running StudyBits](#running)
     3.1 [Running in Docker](#RunInDocker)
 4. [Links](#links)
@@ -64,11 +64,13 @@ Before sending a PR make sure to be compliant with the following:
 
 ### Running in docker <a name="RunInDocker"></a>
 
-Use `TEST_POOL_IP=127.0.0.1 docker-compose up --build --force-recreate pool university-agent-rug university-agent-gent` 
+Starting: Use the `./launch.sh` script to launch all required components of studybits.
 
-Running tests: `TEST_POOL_IP=127.0.0.1 docker-compose up --build --force-recreate --exit-code-from tests`
+Stopping: Use the `./stop.sh` script to stop all running studybits components.
 
-Please note the the enviroment variable TEST_POOL_IP must be supplied as the IP of the HyperLedger indy nodes you wish to use.
+Running tests: Use the `./launch.sh` script with the `--test / -t` flag to run studybits and run integrationtests.
+
+Please note that studybits requires a valid active ipaddress in order to run.
 
 ## Links <a name="links"></a>
 
