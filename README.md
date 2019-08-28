@@ -1,4 +1,7 @@
 # StudyBits
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Dionrats_StudyBits&metric=alert_status)](https://sonarcloud.io/dashboard?id=Dionrats_StudyBits)  [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Dionrats_StudyBits&metric=coverage)](https://sonarcloud.io/dashboard?id=Dionrats_StudyBits) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Dionrats_StudyBits&metric=security_rating)](https://sonarcloud.io/dashboard?id=Dionrats_StudyBits)
+
+
 
 ## Table of contents
 1. [Introduction](#introduction)
