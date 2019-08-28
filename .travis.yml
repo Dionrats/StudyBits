@@ -15,7 +15,4 @@ services:
 script:
   - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=Dionrats_StudyBits -Dsonar.organization=dionrats-github -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN
 after_success:
-    mvn dockerfile:build && \
-      docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD && \
-      docker push drats/university-agent && \
-      docker logout
+    mvn dockerfile:build && docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD && docker push drats/university-agent && docker logout
