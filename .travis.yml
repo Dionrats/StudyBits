@@ -1,5 +1,4 @@
 language: java
-#sudo: true
 dist: trusty
 jdk: oraclejdk11
 addons:
@@ -10,16 +9,15 @@ addons:
       - oracle-java8-installer
 before_install:
     - cd university-agent
-#   - chmod +x mvnw
 services:
   - 'docker'
 install:
   - mvn install -DskipTests
 script:
   - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -DskipTests -Dsonar.projectKey=Dionrats_StudyBits -Dsonar.organization=dionrats-github -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN
-# after_success:
-#   - if [[ "$TRAVIS_BRANCH" == "master" ]]; then
-#       ./mvnw install dockerfile:build ;
-#       docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD ;
-#       docker push drats/documents ;
-# fi
+after_success:
+  - if [[ "$TRAVIS_BRANCH" == "master" ]]; then
+      ./mvnw install dockerfile:build ;
+      docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD ;
+      docker push drats/documents ;
+fi
