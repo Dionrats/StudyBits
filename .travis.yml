@@ -1,5 +1,6 @@
 language: java
 dist: trusty
+sudo: true
 jdk: oraclejdk11
 addons:
   sonarcloud:
@@ -11,13 +12,12 @@ before_install:
     - cd university-agent
 services:
   - 'docker'
-# install:
-#   - mvn install -DskipTests
 script:
-  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -DskipTests -Dsonar.projectKey=Dionrats_StudyBits -Dsonar.organization=dionrats-github -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=Dionrats_StudyBits -Dsonar.organization=dionrats-github -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN
 after_success:
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
       mvn dockerfile:build && \
       docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD && \
-      docker push drats/documents ;
+      docker push drats/university-agent && \
+      docker logout
     fi
