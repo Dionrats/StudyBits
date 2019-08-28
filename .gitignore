@@ -32,3 +32,5 @@ LOG_FILE_IS_UNDEFINED
 
 # mvn versions backup
 *.versionsBackup
+
+.DS_Store

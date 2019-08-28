@@ -6,9 +6,6 @@ import lombok.NoArgsConstructor;
 import org.json.JSONObject;
 
 import javax.persistence.*;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.Map;
 
 @Entity
 @Data
@@ -22,6 +19,7 @@ public class Document {
     private String name;
     @Column
     private String type;
+    @Lob
     @Column
     private byte[] data;
     @Column

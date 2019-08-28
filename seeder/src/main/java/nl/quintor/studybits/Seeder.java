@@ -121,7 +121,6 @@ public class Seeder {
             try {
                 IndyWallet stewardWallet = IndyWallet.open(indyPool, "steward", "000000000000000000000000Steward1", "Th7MpTaRZVRYnPiabds81Y");
                 Issuer trustAnchorIssuer = new Issuer(stewardWallet);
-
                 System.out.println(getSchemaId(trustAnchorIssuer));
             } catch (Exception e) {
                 exception(e);

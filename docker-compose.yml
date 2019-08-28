@@ -1,77 +1,101 @@
-version: '2.1'
+version: '3'
 services:
+
   pool:
     image: studybits/indy-pool:0.1.2
     ports:
     - "9701-9708:9701-9708"
     environment:
-    - TEST_POOL_IP=$TEST_POOL_IP
-    # Host networking is used, because we need to know the pool IP at build time, which is kind-of tricky
-    network_mode: "host"
-  university-agent-rug:
-    image: studybits/university-agent
-    build:
-      context: university-agent
-    command: mvn package spring-boot:run
-    network_mode: "host"
+      TEST_POOL_IP: $POOL_IP
+
+  rug_university_agent:
+    image: drats/university-agent
+    ports:
+      - 8080:8080
     environment:
-    - TEST_POOL_IP=$TEST_POOL_IP
-    - NL_QUINTOR_STUDYBITS_UNIVERSITY_NAME=Rijksuniversiteit Groningen
-    - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES:-mobile-test}
+      nl.quintor.studybits.university.pool: $POOL_IP
+      nl.quintor.studybits.university.name: Rijksuniversiteit Groningen
+      spring.datasource.url: jdbc:mysql://rug_db/agents
+      spring.datasource.password: RijksuniversiteitGroningen
+      IPFS.node.host: rug_ipfs
+    networks:
+      - studybits
     depends_on:
-      pool:
-        condition: service_started
-    healthcheck:
-      test: curl -f http://localhost:8080/swagger-ui.html || exit 1
-      interval: 5s
-      timeout: 2s
-      retries: 35
-  university-agent-gent:
-    build:
-      context: university-agent
-    command: mvn package spring-boot:run
-    network_mode: "host"
+      - pool
+      - rug_db
+      - rug_ipfs
+
+  gent_university_agent:
+    image: drats/university-agent
+    ports:
+      - 8081:8080
     environment:
-    - TEST_POOL_IP=$TEST_POOL_IP
-    - NL_QUINTOR_STUDYBITS_UNIVERSITY_NAME=Universiteit Gent
-    - SERVER_PORT=8081
-    - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES:-mobile-test}
+      nl.quintor.studybits.university.pool: $POOL_IP
+      nl.quintor.studybits.university.name: Universiteit Gent
+      spring.datasource.url: jdbc:mysql://gent_db/agents
+      spring.datasource.password: UniversiteitGent
+      IPFS.node.host: gent_ipfs
+    networks:
+      - studybits
     depends_on:
-      pool:
-        condition: service_started
-    healthcheck:
-      test: curl -f http://localhost:8081/swagger-ui.html || exit 1
-      interval: 5s
-      timeout: 2s
-      retries: 35
+     - pool
+     - gent_db
+     - gent_ipfs
+
+  rug_db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: RijksuniversiteitGroningen
+      MYSQL_DATABASE: agents
+    networks: 
+      - studybits
+
+  gent_db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: UniversiteitGent
+      MYSQL_DATABASE: agents
+    networks: 
+      - studybits
+    
+  rug_ipfs:
+    image: ipfs/go-ipfs
+    ports:
+      - 5001:5001
+    networks:
+      - studybits
+
+  gent_ipfs:
+    image: ipfs/go-ipfs
+    ports:
+      - 5002:5001
+    networks:
+      - studybits
+
   seeder:
-    image: studybits/seeder
-    build:
-      context: seeder  
-    network_mode: "host"
+    image: drats/seeder
+    command: ["./wait-for-it.sh", "-t", "100", "rug_university_agent:8080", "--", "bash", "seed.sh"]
     environment:
-    - TEST_POOL_IP=$TEST_POOL_IP
+      TEST_POOL_IP: $POOL_IP
+    networks:
+      - studybits
     depends_on:
-      pool:
-        condition: service_started
-      university-agent-rug:
-        condition: service_healthy
-      university-agent-gent:
-        condition: service_healthy
-    healthcheck:
-      test: bash -c "[ -f /finished.txt ]"
-      interval: 5s
-      timeout: 2s
-      retries: 35
+     - pool
+     - rug_university_agent
+     - gent_university_agent
 
-  tests:
-    build:
-      context: university-agent
-    environment:
-    - TEST_POOL_IP=$TEST_POOL_IP
-    network_mode: "host"
-    command: mvn verify
-    depends_on:
-      seeder:
-        condition: service_healthy
+  # tests:
+  #   build:
+  #     context: university-agent
+  #   environment:
+  #   - TEST_POOL_IP=$TEST_POOL_IP
+  #   command: mvn verify
+  #   depends_on:
+  #     seeder:
+  #       condition: service_healthy
 
+networks:
+  studybits:
+    driver: bridge
