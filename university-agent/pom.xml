@@ -12,7 +12,7 @@
     <properties>
         <docker.image.prefix>drats</docker.image.prefix>
         <start-class>nl.quintor.studybits.Main</start-class>
-        <java.version>12</java.version>
+        <java.version>11</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
