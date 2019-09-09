@@ -69,7 +69,7 @@ public class FileService {
 
     public boolean verifyDocument(byte[] file, byte[] validation) throws IOException, IndyException, ExecutionException, InterruptedException {
 
-        //prepare validation jsonR
+        //prepare validation json
         JSONObject jsonObject = new JSONObject(new String(validation));
         JSONArray s = jsonObject.getJSONArray("s");
         jsonObject.remove("s");

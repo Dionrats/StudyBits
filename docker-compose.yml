@@ -7,8 +7,12 @@ services:
     - "9701-9708:9701-9708"
     environment:
       TEST_POOL_IP: $POOL_IP
+    networks:
+      - studybits
+      - groningen
+      - gent
 
-  rug_university_agent:
+  rug-university-agent:
     image: drats/university-agent
     ports:
       - 8080:8080
@@ -19,13 +23,13 @@ services:
       spring.datasource.password: RijksuniversiteitGroningen
       IPFS.node.host: rug_ipfs
     networks:
-      - studybits
+      - groningen
     depends_on:
       - pool
       - rug_db
       - rug_ipfs
 
-  gent_university_agent:
+  gent-university-agent:
     image: drats/university-agent
     ports:
       - 8081:8080
@@ -36,7 +40,7 @@ services:
       spring.datasource.password: UniversiteitGent
       IPFS.node.host: gent_ipfs
     networks:
-      - studybits
+      - gent
     depends_on:
      - pool
      - gent_db
@@ -45,11 +49,13 @@ services:
   rug_db:
     image: mysql
     restart: always
+    ports:
+      - 3306:3306
     environment:
       MYSQL_ROOT_PASSWORD: RijksuniversiteitGroningen
       MYSQL_DATABASE: agents
     networks: 
-      - studybits
+      - groningen
 
   gent_db:
     image: mysql
@@ -58,7 +64,7 @@ services:
       MYSQL_ROOT_PASSWORD: UniversiteitGent
       MYSQL_DATABASE: agents
     networks: 
-      - studybits
+      - gent
     
   rug_ipfs:
     image: ipfs/go-ipfs
@@ -66,6 +72,7 @@ services:
       - 5001:5001
     networks:
       - studybits
+      - groningen
 
   gent_ipfs:
     image: ipfs/go-ipfs
@@ -73,29 +80,28 @@ services:
       - 5002:5001
     networks:
       - studybits
+      - gent
 
   seeder:
     image: drats/seeder
-    command: ["./wait-for-it.sh", "-t", "100", "rug_university_agent:8080", "--", "bash", "seed.sh"]
+    command: ["./wait-for-it.sh", "-t", "100", "rug-university-agent:8080", "--", "bash", "seed.sh"]
     environment:
       TEST_POOL_IP: $POOL_IP
+      GRONINGEN_IP: rug-university-agent
+      GENT_IP: gent-university-agent
     networks:
       - studybits
+      - groningen
+      - gent
     depends_on:
      - pool
-     - rug_university_agent
-     - gent_university_agent
-
-  # tests:
-  #   build:
-  #     context: university-agent
-  #   environment:
-  #   - TEST_POOL_IP=$TEST_POOL_IP
-  #   command: mvn verify
-  #   depends_on:
-  #     seeder:
-  #       condition: service_healthy
+     - rug-university-agent
+     - gent-university-agent
 
 networks:
   studybits:
+    driver: bridge
+  groningen:
+    driver: bridge
+  gent:
     driver: bridge

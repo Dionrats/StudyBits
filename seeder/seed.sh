@@ -4,10 +4,11 @@ alias seeder='java -jar ./target/seeder-1.0-SNAPSHOT-jar-with-dependencies.jar'
 
 GRONINGEN_NAME="RijksuniversiteitGroningen"
 GRONINGEN_SEED="000000RijksuniversiteitGroningen"
-GRONINGEN_DOMAIN=http://$TEST_POOL_IP:8080
-echo GroningenDomain: $GRONINGEN_DOMAIN
+GRONINGEN_DOMAIN=http://$GRONINGEN_IP:8080
 GENT_NAME="UniversiteitGent"
 GENT_SEED="0000000000000000UniversiteitGent"
+GENT_DOMAIN=http://$GENT_IP:8080
+
 # Create steward
 seeder did 000000000000000000000000Steward1 steward
 GRONINGEN_DID=$(seeder did $GRONINGEN_SEED $GRONINGEN_NAME)
@@ -21,10 +22,13 @@ SCHEMA_ID_DOCUMENT=$(seeder schema-document)
 
 
 seeder student $GRONINGEN_DOMAIN 12345678
+seeder student $GENT_DOMAIN 98765432
+
 CRED_DEF_ID_TRANSCRIPT=$(seeder cred-def $GRONINGEN_DOMAIN $SCHEMA_ID_TRANSCRIPT "TRANSCRIPT")
 echo "CRED DEF ID $CRED_DEF_ID_TRANSCRIPT"
 
 CRED_DEF_ID_DOCUMENT=$(seeder cred-def $GRONINGEN_DOMAIN $SCHEMA_ID_DOCUMENT "DOCUMENT")
+CRED_DEF_ID_DOCUMENT=$(seeder cred-def $GENT_DOMAIN $SCHEMA_ID_DOCUMENT "DOCUMENT")
 echo "CRED DEF ID $CRED_DEF_ID_DOCUMENT"
 
 seeder exchange-position $GRONINGEN_DOMAIN $CRED_DEF_ID_TRANSCRIPT
